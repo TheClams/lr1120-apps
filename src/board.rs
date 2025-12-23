@@ -14,10 +14,15 @@ bind_interrupts!(struct UartIrqs {
 pub type Lr1120Stm32 = Lr1120<Output<'static>,SpiWrapper, BusyAsync<ExtiInput<'static>>>;
 // pub type Lr1120Stm32 = Lr1120<Output<'static>,Spi<'static,Async>, BusyAsync<ExtiInput<'static>>>;
 
+/// Wrapper for LR1120 dev kit on Nucleo L476RG
 pub struct BoardNucleoL476Rg {
+    /// LR1120 Driver
     pub lr1120: Lr1120Stm32,
-    pub irq: ExtiInput<'static>,
-    pub trigger_tx: Output<'static>,
+    /// IRQ connect to DIO9
+    pub irq1: ExtiInput<'static>,
+    /// IRQ connect to DIO11
+    pub irq2: ExtiInput<'static>,
+    /// UART driver
     pub uart: Uart<'static, Async>
 }
 
@@ -91,8 +96,8 @@ impl BoardNucleoL476Rg {
         let busy = ExtiInput::new(p.PB3, p.EXTI3, Pull::Up);
         let nreset = Output::new(p.PA0, Level::High, Speed::Low);
 
-        let irq = ExtiInput::new(p.PB0, p.EXTI0, Pull::None); // DIO7
-        let trigger_tx = Output::new(p.PA1, Level::Low, Speed::Medium); // DIO8
+        let irq1 = ExtiInput::new(p.PB4, p.EXTI4, Pull::None); // DIO9
+        let irq2 = ExtiInput::new(p.PA9, p.EXTI9, Pull::None); // DIO7
 
         // UART on Virtual Com: 115200bauds, 1 stop bit, no parity, no flow control
         let mut uart_config = UartConfig::default();
@@ -117,7 +122,7 @@ impl BoardNucleoL476Rg {
         // Check version
         let version = lr1120.get_version().await.expect("Reading firmware version !");
         info!("FW Version {}", version);
-        BoardNucleoL476Rg{lr1120, irq, uart, trigger_tx}
+        BoardNucleoL476Rg{lr1120, irq1, irq2, uart}
     }
 
     pub fn get_button_evt() -> ButtonRcvr {

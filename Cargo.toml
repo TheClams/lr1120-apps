@@ -5,7 +5,7 @@ edition = "2024"
 license = "MIT"
 
 [dependencies]
-lr1120 = {version = "0.4.0", features=["defmt"]}
+lr1120 = {version = "0.5", features=["defmt"]}
 
 embassy-stm32 = { version = "0.4.0", features = [ "defmt", "unstable-pac", "stm32l476rg", "memory-x", "time-driver-any", "exti", "chrono", "dual-bank"]  }
 embassy-sync = { version = "0.7.0", features = ["defmt"] }
@@ -34,8 +34,8 @@ static_cell = "2"
 
 micromath = "2.0.0"
 
-[patch.crates-io]
-lr1120 = {version = "0.4.0", path = '../lr1120-driver' }
+# [patch.crates-io]
+# lr1120 = {path = '../lr1120-driver' }
 
 # Disable test when running all target to avoid issue with rust-analyzer
 [lib]
@@ -45,6 +45,18 @@ bench = false
 
 [[bin]]
 name = "get_temp"
+test = false
+doctest = false
+bench = false
+
+[[bin]]
+name = "lora_txrx"
+test = false
+doctest = false
+bench = false
+
+[[bin]]
+name = "fsk_txrx"
 test = false
 doctest = false
 bench = false
